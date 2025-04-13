@@ -15,24 +15,28 @@ import {
   Facebook,
   Visibility,
   VisibilityOff,
-  CheckCircle,
 } from "@mui/icons-material";
-import { useRouter } from "next/router";
-import PersonSharpIcon from "@mui/icons-material/PersonSharp";
 import MailSharpIcon from "@mui/icons-material/MailSharp";
 import KeySharpIcon from "@mui/icons-material/KeySharp";
+import { useRouter } from "next/router";
 import { css, keyframes } from "@emotion/react";
-import { signUp } from "aws-amplify/auth";
+import { signIn } from "aws-amplify/auth";
 import { Bounce, toast } from "react-toastify";
 
 const fadeSlide = keyframes`
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `;
 
 const inputGlassStyle = css`
   label {
-    color: #fff !important;
+    color: #fff !important; /* Always bright white */
     font-weight: 500;
   }
 
@@ -53,63 +57,44 @@ const inputGlassStyle = css`
     }
 
     &.Mui-focused {
-      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+      border-color: transparent;
+      box-shadow: 0 0 8px rgba(255, 255, 255, 0.3); /* soft white glow */
       background: rgba(255, 255, 255, 0.08);
     }
   }
 
   .MuiOutlinedInput-notchedOutline {
-    border-color: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.15);
   }
 `;
 
-const SignUp = () => {
+
+const SignIn = () => {
   const router = useRouter();
-  const [credentials, setCredentials] = useState({
-    fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleCredentialsChange = (e) => {
     const { name, value } = e.target;
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
 
-  const isFormValid =
-    credentials.fullName &&
-    credentials.email &&
-    credentials.password.length >= 6 &&
-    credentials.password === credentials.confirmPassword;
+  const isFormValid = credentials.email && credentials.password.length >= 6;
 
-  const handleSignup = async () => {
+  const handleSignin = async () => {
     try {
-      const { isSignUpComplete, userId, nextStep } = await signUp({
+      const response = await signIn({
         username: credentials.email,
         password: credentials.password,
-        options: {
-          userAttributes: {
-            email: credentials.email,
-            name: credentials.fullName,
-          },
-        },
       });
 
-      if (nextStep?.signUpStep === "CONFIRM_SIGN_UP") {
-        toast.success("Sign up successful, please verify your email.", {
-          position: "top-right",
-          autoClose: 5000,
-          transition: Bounce,
-        });
+      toast.success("Signed in successfully", {
+        position: "top-right",
+        autoClose: 5000,
+        transition: Bounce,
+      });
 
-        router.push({
-          pathname: "/auth/verify",
-          query: { authId: credentials.email },
-        });
-      }
+      router.push("/dashboard");
     } catch (err) {
       toast.error(err.message, {
         position: "top-right",
@@ -147,32 +132,18 @@ const SignUp = () => {
         }}
       >
         <Typography variant="h4" fontWeight="bold" textAlign="center" gutterBottom>
-          Create Account
+          Welcome Back
         </Typography>
 
-        <TextField
-          label="Full Name"
-          name="fullName"
-          placeholder="John Doe"
-          value={credentials.fullName}
-          onChange={handleCredentialsChange}
-          fullWidth
-          variant="outlined"
-          margin="normal"
-          css={inputGlassStyle}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <PersonSharpIcon sx={{ color: "#fff" }} />
-              </InputAdornment>
-            ),
-          }}
-        />
+        <Typography variant="body2" textAlign="center" mb={3} sx={{ color: "rgba(255,255,255,0.7)" }}>
+          Sign in to continue using Remindly
+        </Typography>
 
+        {/* Email Input */}
         <TextField
           label="Email"
-          name="email"
           placeholder="email@example.com"
+          name="email"
           value={credentials.email}
           onChange={handleCredentialsChange}
           fullWidth
@@ -188,11 +159,12 @@ const SignUp = () => {
           }}
         />
 
+        {/* Password Input */}
         <TextField
           label="Password"
+          placeholder="••••••••"
           name="password"
           type={showPassword ? "text" : "password"}
-          placeholder="••••••••"
           value={credentials.password}
           onChange={handleCredentialsChange}
           fullWidth
@@ -219,55 +191,30 @@ const SignUp = () => {
           }}
         />
 
-        <TextField
-          label="Confirm Password"
-          name="confirmPassword"
-          type={showConfirmPassword ? "text" : "password"}
-          placeholder="••••••••"
-          value={credentials.confirmPassword}
-          onChange={handleCredentialsChange}
-          fullWidth
-          variant="outlined"
-          margin="normal"
-          css={inputGlassStyle}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <KeySharpIcon sx={{ color: "#fff" }} />
-              </InputAdornment>
-            ),
-            endAdornment: (
-              <InputAdornment position="end">
-                {credentials.confirmPassword &&
-                credentials.password === credentials.confirmPassword ? (
-                  <CheckCircle color="success" />
-                ) : (
-                  <IconButton
-                    onClick={() => setShowConfirmPassword((prev) => !prev)}
-                    edge="end"
-                    sx={{ color: "#fff" }}
-                  >
-                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                )}
-              </InputAdornment>
-            ),
-          }}
-        />
+        {/* Forgot Password */}
+        <Typography
+          variant="body2"
+          textAlign="right"
+          mt={1}
+          sx={{ color: "rgba(255,255,255,0.6)", cursor: "pointer" }}
+        >
+          Forgot Password?
+        </Typography>
 
+        {/* Sign In Button */}
         <Button
           variant="contained"
           fullWidth
           size="large"
           disabled={!isFormValid}
-          onClick={handleSignup}
+          onClick={handleSignin}
           sx={{
             mt: 3,
             mb: 1,
             py: 1.5,
             fontWeight: "bold",
             borderRadius: 2,
-            backgroundColor: "#fff",
+            backgroundColor: "#ffffff",
             color: "#000",
             transition: "all 0.3s ease",
             "&:hover": {
@@ -277,22 +224,25 @@ const SignUp = () => {
             },
           }}
         >
-          Sign Up
+          Sign In
         </Button>
 
+        {/* Redirect to Sign Up */}
         <Typography variant="body2" textAlign="center" mt={2} sx={{ color: "rgba(255,255,255,0.6)" }}>
-          Already have an account?{" "}
+          Don’t have an account?{" "}
           <Typography
             component="span"
             sx={{ color: "#fff", fontWeight: 500, cursor: "pointer" }}
-            onClick={() => router.push("/auth/signin")}
+            onClick={() => router.push("/auth/signup")}
           >
-            Sign In
+            Sign Up
           </Typography>
         </Typography>
 
+        {/* Divider */}
         <Divider sx={{ my: 3, borderColor: "rgba(255, 255, 255, 0.15)" }}>or</Divider>
 
+        {/* Google Sign In */}
         <Button
           fullWidth
           variant="outlined"
@@ -310,9 +260,10 @@ const SignUp = () => {
             },
           }}
         >
-          Sign Up with Google
+          Sign In with Google
         </Button>
 
+        {/* Facebook Sign In */}
         <Button
           fullWidth
           variant="outlined"
@@ -329,11 +280,11 @@ const SignUp = () => {
             },
           }}
         >
-          Sign Up with Facebook
+          Sign In with Facebook
         </Button>
       </Paper>
     </Box>
   );
 };
 
-export default SignUp;
+export default SignIn;

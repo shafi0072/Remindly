@@ -8,19 +8,50 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import RootLayout from "@/src/components/layout/RootLayout";
-import { ThemeProvider, CssBaseline } from '@mui/material';
-import  { createAppTheme } from "@/src/config/theme"
+import AuthLayout from "@/src/components/layout/AuthLayout";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import { createAppTheme } from "@/src/config/theme";
+import { useRouter } from "next/router";
+import AuthContext from "@/src/Context/AuthContext";
+import { Bounce, ToastContainer } from "react-toastify";
 Amplify.configure(outputs);
 
 export default function App({ Component, pageProps }: AppProps) {
-  const mode = 'light'; // or 'dark'
+  const mode = "light"; // or 'dark'
   const theme = createAppTheme(mode);
+  const router = useRouter();
+  const { pathname } = router;
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline/>
-    <RootLayout>
-      <Component {...pageProps} />
-    </RootLayout>
-    </ThemeProvider>
+    <>
+      <ThemeProvider theme={theme}>
+        <AuthContext>
+          <CssBaseline />
+          {!pathname?.startsWith("/auth/") ? (
+            <RootLayout>
+              <Component {...pageProps} />
+            </RootLayout>
+          ) : pathname?.startsWith("/auth/") ? (
+            <AuthLayout>
+              <Component {...pageProps} />
+            </AuthLayout>
+          ) : (
+            <Component {...pageProps} />
+          )}
+        </AuthContext>
+      </ThemeProvider>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        transition={Bounce}
+      />
+    </>
   );
 }
