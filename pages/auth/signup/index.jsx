@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import React from 'react';
-import SignUp from '../../../src/components/app/Authentication/signup';
+import SignUp from '../../../src/components/app/Authentication/Signup/index';
 
 const index = () => {
     return (
@@ -9,5 +9,5 @@ const index = () => {
         </Box>
     );
 };
-
+// ss
 export default index;
