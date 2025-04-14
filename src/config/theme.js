@@ -6,59 +6,41 @@ const getDesignTokens = (mode) => ({
     ...(mode === 'light'
       ? {
           primary: {
-            main: '#5A67D8',
-          },
-          secondary: {
-            main: '#7F9CF5',
+            main: '#792FD2', // Purple 600
           },
           background: {
-            default: '#F7FAFC',
-            paper: '#FFFFFF',
+            default: '#FAFBFB', // Off-White
+            paper: '#FAFBFB',   // Lavender 100
           },
           text: {
-            primary: '#2D3748',
-            secondary: '#718096',
-          },
-          success: {
-            main: '#48BB78',
-          },
-          error: {
-            main: '#F56565',
+            primary: '#1C1B1E', // Charcoal
+            secondary: '#5C5C5C',
           },
           info: {
-            main: '#00B5D8',
+            main: '#A2DBDF', // Aqua 300 (Accent)
           },
         }
       : {
           primary: {
-            main: '#7F9CF5',
-          },
-          secondary: {
-            main: '#5A67D8',
+            main: '#792FD2',
           },
           background: {
-            default: '#1A202C',
-            paper: '#2D3748',
+            default: '#1C1B1E',
+            paper: '#2D2D2D',
           },
           text: {
-            primary: '#E2E8F0',
-            secondary: '#A0AEC0',
-          },
-          success: {
-            main: '#48BB78',
-          },
-          error: {
-            main: '#F56565',
+            primary: '#FAFBFB',
+            secondary: '#A0A0A0',
           },
           info: {
-            main: '#00B5D8',
+            main: '#A2DBDF',
           },
         }),
   },
 
   typography: {
-    fontFamily: `'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif`,
-    h1: { fontWeight: 800, fontSize: '3rem' },
+    fontFamily: `'Satoshi', 'Arial', sans-serif`,
+    h1: { fontWeight: 900, fontSize: '3rem' },
     h2: { fontWeight: 700, fontSize: '2.25rem' },
     h3: { fontWeight: 600, fontSize: '1.875rem' },
     h4: { fontWeight: 600, fontSize: '1.5rem' },
@@ -74,7 +56,6 @@ const getDesignTokens = (mode) => ({
   },
 
   components: {
-    // 🌟 Buttons
     MuiButton: {
       styleOverrides: {
         root: {
@@ -85,22 +66,21 @@ const getDesignTokens = (mode) => ({
           boxShadow: 'none',
         },
         containedPrimary: {
-          backgroundColor: '#5A67D8',
+          backgroundColor: '#792FD2',
           '&:hover': {
-            backgroundColor: '#434190',
+            backgroundColor: '#5A20A6',
           },
         },
         outlinedPrimary: {
-          borderColor: '#5A67D8',
-          color: '#5A67D8',
+          borderColor: '#792FD2',
+          color: '#792FD2',
           '&:hover': {
-            backgroundColor: '#EDF2F7',
+            backgroundColor: '#ECE3F0',
           },
         },
       },
     },
 
-    // 🌟 TextField / Input
     MuiTextField: {
       defaultProps: {
         variant: 'outlined',
@@ -110,15 +90,15 @@ const getDesignTokens = (mode) => ({
       styleOverrides: {
         root: {
           borderRadius: 10,
-          backgroundColor: mode === 'light' ? '#fff' : '#2D3748',
+          backgroundColor: mode === 'light' ? '#FFFFFF' : '#2D2D2D',
           '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: mode === 'light' ? '#CBD5E0' : '#4A5568',
+            borderColor: mode === 'light' ? '#D0D0D0' : '#4A5568',
           },
           '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: mode === 'light' ? '#A0AEC0' : '#718096',
+            borderColor: '#A2DBDF',
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#5A67D8',
+            borderColor: '#792FD2',
             borderWidth: '2px',
           },
         },
@@ -128,18 +108,18 @@ const getDesignTokens = (mode) => ({
       },
     },
 
-    // Label styling for TextField
     MuiInputLabel: {
       styleOverrides: {
         root: {
-          color: mode === 'light' ? '#4A5568' : '#A0AEC0',
+          color: mode === 'light' ? '#5C5C5C' : '#A0A0A0',
           '&.Mui-focused': {
-            color: '#5A67D8',
+            color: '#792FD2',
           },
         },
       },
     },
   },
 });
+
 
 export const createAppTheme = (mode = 'light') => createTheme(getDesignTokens(mode));
